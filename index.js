@@ -9,20 +9,45 @@ context.fillRect(0, 0, canvas.width, canvas.height); // Criar um retângulo(posi
 const gravity = 0.7;
 // Players
 class Sprite {
-    constructor({ position, velocity }) {
+    constructor({ position, velocity, color = 'red', offset }) {
         this.position = position;
         this.velocity = velocity;
+        this.width = 50;
         this.height = 150;
         this.lastKey; // Previnir conflitos na hora de pressionar(kewdown) e pegar o último estado atual da tecla
+        this.attackBox = {
+            position: {
+                x: this.position.x,
+                y: this.position.y
+            },
+            offset,
+            width: 100,
+            height: 50,
+        };
+        this.color = color;
+        this.isAttacking;
     }
 
     draw() {
-        context.fillStyle = 'red';
-        context.fillRect(this.position.x, this.position.y, 50, this.height);
+        context.fillStyle = this.color;
+        context.fillRect(this.position.x, this.position.y, this.width, this.height);
+    
+        // Attack box:
+        if(this.isAttacking) {
+            context.fillStyle = 'green';
+            context.fillRect(
+                this.attackBox.position.x,
+                this.attackBox.position.y,
+                this.attackBox.width,
+                this.attackBox.height
+            );
+        }
     }
 
     update() { // Atualizar cada velocidade do frame de cada personagem ou outro obj
         this.draw();
+        this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
+        this.attackBox.position.y = this.position.y;
 
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
@@ -34,6 +59,13 @@ class Sprite {
         else
             this.velocity.y += gravity; // Se não for a gravidade vai puxar para o chão que é o último pixel da altura do canvas.
     }
+
+    attack() {
+        this.isAttacking = true;
+        setTimeout(() => {
+            this.isAttacking = false;
+        }, 100);
+    }
 }
 
 const player = new Sprite({
@@ -44,7 +76,11 @@ const player = new Sprite({
     velocity: { // A velocidade contém tanto no sentido direita esquerda(x), quanto cima baixo(y)
         x: 0,
         y: 0
-    }
+    },
+    offset: {
+        x: 0,
+        y: 0
+    },
 });
 
 const enemy = new Sprite({
@@ -55,7 +91,12 @@ const enemy = new Sprite({
     velocity: {
         x: 0,
         y: 0
-    }
+    },
+    color: "blue",
+    offset: {
+        x: -50,
+        y: 0
+    },
 });
 
 const keys = {
@@ -76,14 +117,25 @@ const keys = {
     }
 };
 
+function rectangularCollition({
+    rectangle1,
+    rectangle2
+}) {
+    return (
+        rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x
+        && rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.width
+        && rectangle1.attackBox.position.y + rectangle1.attackBox.height >= rectangle2.position.y
+        && rectangle1.attackBox.position.y <= rectangle2.position.y + rectangle2.height
+    );
+}
+
 // Gravity
 function animate() {
     window.requestAnimationFrame(animate); // Loop infinito para gerar frames, ou seja, o fps que por default é 60 fps
 
-    // Atualizar o backgorund e jogadores com seus frames, no caso entrando no loop de sempre descer no sentido y(gravidade) com o y somando 10px
+    // Atualizar o background e jogadores com seus frames, no caso entrando no loop de sempre descer no sentido y(gravidade) com o y somando 10px
     context.fillStyle = 'black';
     context.fillRect(0, 0, canvas.width, canvas.height);
-    console.log(player.velocity);
     player.update();
     enemy.update();
 
@@ -103,6 +155,23 @@ function animate() {
     } else if(keys.arrowRight.pressed && enemy.lastKey === 'ArrowRight') {
         enemy.velocity.x = 5;
     }
+
+    // Detect for collision:
+    if(rectangularCollition({
+        rectangle1: player,
+        rectangle2: enemy
+    }) && player.isAttacking) {
+        player.isAttacking = false; // Dar 1 hit
+        console.log('Player is attacking');
+    }
+
+    if(rectangularCollition({
+        rectangle1: enemy,
+        rectangle2: player
+    }) && enemy.isAttacking) {
+        enemy.isAttacking = false; // Dar 1 hit
+        console.log('Enemy is attacking');
+    }
 }
 animate();
 
@@ -120,6 +189,10 @@ window.addEventListener('keydown', (event) => {
         case 'w':
             player.velocity.y = -20;
             break;
+        case ' ':
+            player.attack();
+            break;
+
         // Enemy keys:
         case 'ArrowRight':
             keys.arrowRight.pressed = true;
@@ -133,6 +206,10 @@ window.addEventListener('keydown', (event) => {
         case 'ArrowUp':
             enemy.velocity.y = -20;
             enemy.lastKey = 'ArrowUp';
+            break;
+        case 'ArrowDown':
+            enemy.attack();
+            enemy.lastKey = 'ArrowDown';
             break;
     }
 });
