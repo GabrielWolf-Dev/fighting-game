@@ -1,0 +1,59 @@
+* {
+    box-sizing: border-box;
+}
+
+.container-div {
+    position: relative;
+    display: inline; /* Faz com que se houver um filho com display em "block", pegue a largura & altura dele */ 
+}
+
+.container-health-timer-ui {
+    width: 100%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+.timer {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    flex-shrink: 0; /* Retira a flexibilidade de se adaptar com a largura, quando se passa do valor o conjunto de elementos da tela */ 
+}
+
+.container-bar {
+    width: 100%;
+    height: 30px;
+    position: relative;
+}
+
+.container-bar-player {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.player-health, .enemy-health {
+    width: 100%;
+    height: 30px;
+    background-color: yellow;
+}
+
+.health-bar {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: blue;
+}
+
+.player-health-bar {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background-color: blue;
+}

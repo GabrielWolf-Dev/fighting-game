@@ -4,11 +4,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Fighting Game</title>
 </head>
 <body>
-    <canvas id="canvas-game"></canvas>
-
+    <div class="container-div">
+        <header class="container-health-timer-ui">
+            <!-- player health -->
+            <div class="container-bar container-bar-player">
+                <div class="player-health">
+                    <div id="playerHealth" class="player-health-bar"></div>
+                </div>
+            </div>
+            <!-- timer -->
+            <div class="timer"></div>
+            <!-- enemy health -->
+            <div class="container-bar">
+                <div class="enemy-health">
+                    <div id="enemyHealth" class="health-bar"></div>
+                </div>
+            </div>
+        </header>
+        <canvas id="canvas-game"></canvas>
+    </div>
     <script src="./index.js"></script>
 </body>
 </html>
