@@ -130,6 +130,33 @@ function rectangularCollition({
     );
 }
 
+function determineWinner({ player, enemy, timerId }) {
+    clearTimeout(timerId);
+    document.querySelector('.winner-game').style.display = 'flex';
+
+    if(player.health === enemy.health){
+        document.querySelector('.winner-game').textContent = 'Tie';
+    } else if(player.health > enemy.health) {
+        document.querySelector('.winner-game').textContent = 'Player 1 wins';
+    } else if(enemy.health > player.health) {
+        document.querySelector('.winner-game').textContent = 'Player 2 wins';
+    }
+}
+
+let timer = 60;
+let timerId;
+function decreaseTimer(){
+    if(timer > 0) {
+        timerId = setTimeout(decreaseTimer, 1000)
+        timer--;
+        document.querySelector('.timer').textContent = timer;
+    }
+
+    if(timer === 0)
+        determineWinner({ player, enemy, timerId });
+}
+decreaseTimer();
+
 // Gravity
 function animate() {
     window.requestAnimationFrame(animate); // Loop infinito para gerar frames, ou seja, o fps que por default é 60 fps
@@ -163,7 +190,7 @@ function animate() {
         rectangle2: enemy
     }) && player.isAttacking) {
         player.isAttacking = false; // Dar 1 hit
-        console.log('Player is attacking');
+        //console.log('Player is attacking');
 
         enemy.health -= 20;
         document.querySelector('#enemyHealth').style.width = enemy.health + '%';
@@ -174,10 +201,15 @@ function animate() {
         rectangle2: player
     }) && enemy.isAttacking) {
         enemy.isAttacking = false; // Dar 1 hit
-        console.log('Enemy is attacking');
+        //console.log('Enemy is attacking');
 
         player.health -= 20;
         document.querySelector('#playerHealth').style.width = player.health + '%';
+    }
+
+    // end game base on health:
+    if(enemy.health <= 0 || player.health <= 0) {
+        determineWinner({ player, enemy, timerId });
     }
 }
 animate();
