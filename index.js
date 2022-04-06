@@ -7,69 +7,14 @@ canvas.height = 567;
 context.fillRect(0, 0, canvas.width, canvas.height); // Criar um retângulo(posição "x", posição "y", width, height do retângulo criado)
 
 const gravity = 0.7;
-// Players
-class Sprite {
-    constructor({ position, velocity, color = 'red', offset }) {
-        this.position = position;
-        this.velocity = velocity;
-        this.width = 50;
-        this.height = 150;
-        this.lastKey; // Previnir conflitos na hora de pressionar(kewdown) e pegar o último estado atual da tecla
-        this.attackBox = {
-            position: {
-                x: this.position.x,
-                y: this.position.y
-            },
-            offset,
-            width: 100,
-            height: 50,
-        };
-        this.color = color;
-        this.isAttacking;
-        this.health = 100;
-    }
-
-    draw() {
-        context.fillStyle = this.color;
-        context.fillRect(this.position.x, this.position.y, this.width, this.height);
-    
-        // Attack box:
-        if(this.isAttacking) {
-            context.fillStyle = 'green';
-            context.fillRect(
-                this.attackBox.position.x,
-                this.attackBox.position.y,
-                this.attackBox.width,
-                this.attackBox.height
-            );
-        }
-    }
-
-    update() { // Atualizar cada velocidade do frame de cada personagem ou outro obj
-        this.draw();
-        this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
-        this.attackBox.position.y = this.position.y;
-
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
-
-        const totalBottomPlayer =  this.position.y + this.height + this.velocity.y;
-        const canvasHeight = canvas.height;
-        if(totalBottomPlayer >= canvasHeight) // Se o valor total do bottom do player for igual a altura do canvas é pra parar de cair.
-            this.velocity.y = 0; // Pare de cair
-        else
-            this.velocity.y += gravity; // Se não for a gravidade vai puxar para o chão que é o último pixel da altura do canvas.
-    }
-
-    attack() {
-        this.isAttacking = true;
-        setTimeout(() => {
-            this.isAttacking = false;
-        }, 100);
-    }
-}
-
-const player = new Sprite({
+const background = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    },
+    imageSrc: './assets/background.png'
+});
+const player = new Fighter({
     position: {
         x: 0,
         y: 0
@@ -84,7 +29,7 @@ const player = new Sprite({
     },
 });
 
-const enemy = new Sprite({
+const enemy = new Fighter({
     position: {
         x: 400,
         y: 100
@@ -118,43 +63,6 @@ const keys = {
     }
 };
 
-function rectangularCollition({
-    rectangle1,
-    rectangle2
-}) {
-    return (
-        rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x
-        && rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.width
-        && rectangle1.attackBox.position.y + rectangle1.attackBox.height >= rectangle2.position.y
-        && rectangle1.attackBox.position.y <= rectangle2.position.y + rectangle2.height
-    );
-}
-
-function determineWinner({ player, enemy, timerId }) {
-    clearTimeout(timerId);
-    document.querySelector('.winner-game').style.display = 'flex';
-
-    if(player.health === enemy.health){
-        document.querySelector('.winner-game').textContent = 'Tie';
-    } else if(player.health > enemy.health) {
-        document.querySelector('.winner-game').textContent = 'Player 1 wins';
-    } else if(enemy.health > player.health) {
-        document.querySelector('.winner-game').textContent = 'Player 2 wins';
-    }
-}
-
-let timer = 60;
-let timerId;
-function decreaseTimer(){
-    if(timer > 0) {
-        timerId = setTimeout(decreaseTimer, 1000)
-        timer--;
-        document.querySelector('.timer').textContent = timer;
-    }
-
-    if(timer === 0)
-        determineWinner({ player, enemy, timerId });
-}
 decreaseTimer();
 
 // Gravity
@@ -164,9 +72,10 @@ function animate() {
     // Atualizar o background e jogadores com seus frames, no caso entrando no loop de sempre descer no sentido y(gravidade) com o y somando 10px
     context.fillStyle = 'black';
     context.fillRect(0, 0, canvas.width, canvas.height);
+    background.update();
     player.update();
     enemy.update();
-
+    
     player.velocity.x = 0; // Resetar quando é pressionado algum botão e não ficar andando sozinho no próximo repain do requestAnimationFrame
     enemy.velocity.x = 0;
 
