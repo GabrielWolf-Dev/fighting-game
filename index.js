@@ -51,6 +51,14 @@ const player = new Fighter({
         run: {
             imageSrc: './assets/samuraiMack/Run.png',
             framesMax: 8,
+        },
+        jump: {
+            imageSrc: './assets/samuraiMack/Jump.png',
+            framesMax: 2,
+        },
+        fall: {
+            imageSrc: './assets/samuraiMack/Fall.png',
+            framesMax: 2,
         }
     }
 });
@@ -107,13 +115,21 @@ function animate() {
     enemy.velocity.x = 0;
 
     // Player movement
-    player.image = player.sprites.idle.image; // Default animation
     if(keys.a.pressed && player.lastKey === 'a') { // Previnir um bug que quando é acionado um dos botões de andar e depois é pressionado o outro botão, o personagem para de andar pois entra em conflito os listeners com os valores.
         player.velocity.x = -5;
-        player.image = player.sprites.run.image;
+        player.switchSprite('run');
     } else if(keys.d.pressed && player.lastKey === 'd') {
         player.velocity.x = 5;
-        player.image = player.sprites.run.image;
+        player.switchSprite('run');
+    } else {
+        player.switchSprite('idle');
+    }
+
+    // Jump Animation:
+    if(player.velocity.y < 0) {
+        player.switchSprite('jump');
+    } else if (player.velocity.y > 0) {
+        player.switchSprite('fall');
     }
 
     // Enemy movement
