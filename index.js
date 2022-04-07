@@ -36,6 +36,23 @@ const player = new Fighter({
         x: 0,
         y: 0
     },
+    imageSrc: './assets/samuraiMack/Idle.png',
+    scale: 2.5,
+    framesMax: 8,
+    offset: {
+        x: 215,
+        y: 155
+    },
+    sprites: {
+        idle: {
+            imageSrc: './assets/samuraiMack/Idle.png',
+            framesMax: 8,
+        },
+        run: {
+            imageSrc: './assets/samuraiMack/Run.png',
+            framesMax: 8,
+        }
+    }
 });
 
 const enemy = new Fighter({
@@ -84,16 +101,19 @@ function animate() {
     background.update();
     shop.update();
     player.update();
-    enemy.update();
+    //enemy.update();
     
     player.velocity.x = 0; // Resetar quando é pressionado algum botão e não ficar andando sozinho no próximo repain do requestAnimationFrame
     enemy.velocity.x = 0;
 
     // Player movement
+    player.image = player.sprites.idle.image; // Default animation
     if(keys.a.pressed && player.lastKey === 'a') { // Previnir um bug que quando é acionado um dos botões de andar e depois é pressionado o outro botão, o personagem para de andar pois entra em conflito os listeners com os valores.
         player.velocity.x = -5;
+        player.image = player.sprites.run.image;
     } else if(keys.d.pressed && player.lastKey === 'd') {
         player.velocity.x = 5;
+        player.image = player.sprites.run.image;
     }
 
     // Enemy movement
