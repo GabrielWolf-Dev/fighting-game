@@ -12,31 +12,16 @@ function rectangularCollition({
 
 function determineWinner({ player, enemy, timerId }) {
     clearTimeout(timerId);
-    clearTimeout(phraseToRestartPage);
     const element = document.querySelector('.winner-game');
     element.style.display = 'flex';
 
     if(player.health === enemy.health){
-        const phrase = 'Empate!';
-        
-        phraseToRestartPage(phrase, element);
+        element.textContent = 'Empate! Recarregue a página para recomeçar novamente.';
     } else if(player.health > enemy.health) {
-        const phrase = 'Jogador 1 ganhou!';
-
-        phraseToRestartPage(phrase, element);
+        element.textContent = 'Jogador 1 ganhou! Recarregue a página para recomeçar novamente.';
     } else if(enemy.health > player.health) {
-        const phrase = 'Jogador 2 ganhou!';
-
-        phraseToRestartPage(phrase, element);
+        element.textContent = 'Jogador 2 ganhou! Recarregue a página para recomeçar novamente.';
     }
-}
-
-function phraseToRestartPage(phrase, element) {
-    element.textContent = phrase + ' Recomeçando o jogo em instantes...';
-
-    setInterval(() => {
-        location.reload();
-    }, 2500);
 }
 
 let timer = 60;
