@@ -63,7 +63,19 @@ const player = new Fighter({
         attack1: {
             imageSrc: './assets/samuraiMack/Attack1.png',
             framesMax: 6,
+        },
+        takeHit: {
+            imageSrc: './assets/samuraiMack/Take Hit - white silhouette.png',
+            framesMax: 4
         }
+    },
+    attackBox: {
+        offset: {
+            x: 100,
+            y: 50
+        },
+        width: 158,
+        height: 50
     }
 });
 
@@ -81,6 +93,47 @@ const enemy = new Fighter({
         x: -50,
         y: 0
     },
+    imageSrc: './assets/kenji/Idle.png',
+    scale: 2.5,
+    framesMax: 4,
+    offset: {
+        x: 215,
+        y: 170
+    },
+    sprites: {
+        idle: {
+            imageSrc: './assets/kenji/Idle.png',
+            framesMax: 4,
+        },
+        run: {
+            imageSrc: './assets/kenji/Run.png',
+            framesMax: 8,
+        },
+        jump: {
+            imageSrc: './assets/kenji/Jump.png',
+            framesMax: 2,
+        },
+        fall: {
+            imageSrc: './assets/kenji/Fall.png',
+            framesMax: 2,
+        },
+        attack1: {
+            imageSrc: './assets/kenji/Attack1.png',
+            framesMax: 4,
+        },
+        takeHit: {
+            imageSrc: './assets/kenji/Take hit.png',
+            framesMax: 3
+        }
+    },
+    attackBox: {
+        offset: {
+            x: -170,
+            y: 50
+        },
+        width: 170,
+        height: 50
+    }
 });
 
 const keys = {
@@ -113,7 +166,7 @@ function animate() {
     background.update();
     shop.update();
     player.update();
-    //enemy.update();
+    enemy.update();
     
     player.velocity.x = 0; // Resetar quando é pressionado algum botão e não ficar andando sozinho no próximo repain do requestAnimationFrame
     enemy.velocity.x = 0;
@@ -139,31 +192,53 @@ function animate() {
     // Enemy movement
     if(keys.arrowLeft.pressed && enemy.lastKey === 'ArrowLeft') { // Previnir um bug que quando é acionado um dos botões de andar e depois é pressionado o outro botão, o personagem para de andar pois entra em conflito os listeners com os valores.
         enemy.velocity.x = -5;
+        enemy.switchSprite('run');
     } else if(keys.arrowRight.pressed && enemy.lastKey === 'ArrowRight') {
         enemy.velocity.x = 5;
+        enemy.switchSprite('run');
+    } else {
+        enemy.switchSprite('idle');
+    }
+
+    // Jump Enemy:
+    if(enemy.velocity.y < 0) {
+        enemy.switchSprite('jump');
+    } else if (enemy.velocity.y > 0) {
+        enemy.switchSprite('fall');
     }
 
     // Detect for collision:
     if(rectangularCollition({
         rectangle1: player,
         rectangle2: enemy
-    }) && player.isAttacking) {
+    }) && player.isAttacking
+    && player.framesCurrent === 4) {
+        enemy.takeHit();
         player.isAttacking = false; // Dar 1 hit
         //console.log('Player is attacking');
 
-        enemy.health -= 20;
         document.querySelector('#enemyHealth').style.width = enemy.health + '%';
+    }
+
+    if(player.isAttacking && player.framesCurrent === 4) {
+        player.isAttacking = false;
     }
 
     if(rectangularCollition({
         rectangle1: enemy,
         rectangle2: player
-    }) && enemy.isAttacking) {
+    }) && enemy.isAttacking
+    && enemy.framesCurrent === 2) {
+        player.takeHit();
         enemy.isAttacking = false; // Dar 1 hit
         //console.log('Enemy is attacking');
 
-        player.health -= 20;
         document.querySelector('#playerHealth').style.width = player.health + '%';
+    }
+
+
+    if(enemy.isAttacking && enemy.framesCurrent === 2) {
+        enemy.isAttacking = false;
     }
 
     // end game base on health:
@@ -203,7 +278,6 @@ window.addEventListener('keydown', (event) => {
             break;
         case 'ArrowUp':
             enemy.velocity.y = -20;
-            enemy.lastKey = 'ArrowUp';
             break;
         case 'ArrowDown':
             enemy.attack();
