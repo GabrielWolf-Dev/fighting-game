@@ -34,7 +34,7 @@ function phraseToRestartPage(phrase, element) {
     element.textContent = phrase + ' Recomeçando o jogo em instantes...';
 
     setTimeout(() => {
-        document.location.reload(true);
+        document.location.reload();
     }, 2500);
 }
 
