@@ -12,6 +12,7 @@ function rectangularCollition({
 
 function determineWinner({ player, enemy, timerId }) {
     clearTimeout(timerId);
+    clearTimeout(phraseToRestartPage);
     const element = document.querySelector('.winner-game');
     element.style.display = 'flex';
 
@@ -33,8 +34,8 @@ function determineWinner({ player, enemy, timerId }) {
 function phraseToRestartPage(phrase, element) {
     element.textContent = phrase + ' Recomeçando o jogo em instantes...';
 
-    setTimeout(() => {
-        document.location.reload();
+    setInterval(() => {
+        location.reload();
     }, 2500);
 }
 
