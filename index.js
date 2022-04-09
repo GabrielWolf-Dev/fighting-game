@@ -67,6 +67,10 @@ const player = new Fighter({
         takeHit: {
             imageSrc: './assets/samuraiMack/Take Hit - white silhouette.png',
             framesMax: 4
+        },
+        death: {
+            imageSrc: './assets/samuraiMack/Death.png',
+            framesMax: 6
         }
     },
     attackBox: {
@@ -124,6 +128,10 @@ const enemy = new Fighter({
         takeHit: {
             imageSrc: './assets/kenji/Take hit.png',
             framesMax: 3
+        },
+        death: {
+            imageSrc: './assets/kenji/Death.png',
+            framesMax: 7
         }
     },
     attackBox: {
@@ -250,39 +258,45 @@ animate();
 
 // Event Listeners:
 window.addEventListener('keydown', (event) => {
-    switch (event.key) {
-        case 'd':
-            keys.d.pressed = true;
-            player.lastKey = 'd';
+    if(!player.dead) {
+        switch (event.key) {
+            case 'd':
+                keys.d.pressed = true;
+                player.lastKey = 'd';
             break;
-        case 'a':
-            keys.a.pressed = true;
-            player.lastKey = 'a';
+            case 'a':
+                keys.a.pressed = true;
+                player.lastKey = 'a';
             break;
-        case 'w':
-            player.velocity.y = -20;
+            case 'w':
+                player.velocity.y = -20;
             break;
-        case ' ':
-            player.attack();
+            case ' ':
+                player.attack();
             break;
+        }
+    }
 
+    if(!enemy.dead) {
         // Enemy keys:
-        case 'ArrowRight':
-            keys.arrowRight.pressed = true;
-            enemy.lastKey = 'ArrowRight';
-            //lastKey = 'd'; -- Isso vai reescrever o player, no caso vamos criar uma variável no this.lastKey para mexer com estado das teclas do inimigo
+        switch(event.key) {
+            case 'ArrowRight':
+                keys.arrowRight.pressed = true;
+                enemy.lastKey = 'ArrowRight';
+                //lastKey = 'd'; -- Isso vai reescrever o player, no caso vamos criar uma variável no this.lastKey para mexer com estado das teclas do inimigo
             break;
-        case 'ArrowLeft':
-            keys.arrowLeft.pressed = true;
-            enemy.lastKey = 'ArrowLeft';
+            case 'ArrowLeft':
+                keys.arrowLeft.pressed = true;
+                enemy.lastKey = 'ArrowLeft';
             break;
-        case 'ArrowUp':
-            enemy.velocity.y = -20;
+            case 'ArrowUp':
+                enemy.velocity.y = -20;
             break;
-        case 'ArrowDown':
-            enemy.attack();
-            enemy.lastKey = 'ArrowDown';
+            case 'ArrowDown':
+                enemy.attack();
+                enemy.lastKey = 'ArrowDown';
             break;
+        }
     }
 });
 
@@ -290,19 +304,19 @@ window.addEventListener('keyup', (event) => {
     switch (event.key) {
         case 'd':
             keys.d.pressed = false;
-            break;
+        break;
         case 'a':
             keys.a.pressed = false;
-            break;
+        break;
     }
 
     // Enemy keys:
     switch (event.key) {
         case 'ArrowRight':
             keys.arrowRight.pressed = false;
-            break;
+        break;
         case 'ArrowLeft':
             keys.arrowLeft.pressed = false;
-            break;
+        break;
     }
 });
