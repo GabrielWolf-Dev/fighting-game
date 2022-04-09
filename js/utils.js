@@ -12,15 +12,30 @@ function rectangularCollition({
 
 function determineWinner({ player, enemy, timerId }) {
     clearTimeout(timerId);
-    document.querySelector('.winner-game').style.display = 'flex';
+    const element = document.querySelector('.winner-game');
+    element.style.display = 'flex';
 
     if(player.health === enemy.health){
-        document.querySelector('.winner-game').textContent = 'Tie';
+        const phrase = 'Empate!';
+        
+        phraseToRestartPage(phrase, element);
     } else if(player.health > enemy.health) {
-        document.querySelector('.winner-game').textContent = 'Player 1 wins';
+        const phrase = 'Jogador 1 ganhou!';
+
+        phraseToRestartPage(phrase, element);
     } else if(enemy.health > player.health) {
-        document.querySelector('.winner-game').textContent = 'Player 2 wins';
+        const phrase = 'Jogador 2 ganhou!';
+
+        phraseToRestartPage(phrase, element);
     }
+}
+
+function phraseToRestartPage(phrase, element) {
+    element.textContent = phrase + ' Recomeçando o jogo em instantes...';
+
+    setTimeout(() => {
+        document.location.reload(true);
+    }, 2500);
 }
 
 let timer = 60;

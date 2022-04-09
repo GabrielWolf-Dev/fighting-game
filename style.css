@@ -1,5 +1,6 @@
 * {
     box-sizing: border-box;
+    font-family: 'Press Start 2P', cursive;
 }
 
 .container-div {
@@ -17,11 +18,13 @@
 
 .timer {
     width: 100px;
-    height: 100px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: red;
+    background-color: #212121;
+    color: white;
+    border: 4px solid white;
     flex-shrink: 0; /* Retira a flexibilidade de se adaptar com a largura, quando se passa do valor o conjunto de elementos da tela */ 
 }
 
@@ -38,9 +41,17 @@
 
 .player-health, .enemy-health {
     width: 100%;
-    height: 30px;
-    background-color: yellow;
+    background-color: red;
+    border: 4px solid white;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
+
+.player-health { border-right: 0; }
+.enemy-health { border-left: 0; }
 
 .health-bar {
     width: 100%;
@@ -49,7 +60,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: blue;
+    background-color: #818CF8;
+    transition: all ease-in .3s;
 }
 
 .player-health-bar {
@@ -58,10 +70,16 @@
     top: 0;
     bottom: 0;
     right: 0;
-    background-color: blue;
+    background-color: #818CF8;
+    transition: all ease-in .3s;
 }
 
 .winner-game {
+    padding: 16px;
+    text-align: center;
+    background-color: #818CF8;
+    box-shadow: 5px 5px 0px #212121;
+    border: 4px solid white;
     position: absolute;
     color: white;
     display: none;
